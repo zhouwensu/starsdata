@@ -13,7 +13,7 @@ class PlotController:
         self._plot_notebook = plot_notebook
         self._plot_counter = plot_counter
         self._plot_view = PlotView(self._plot_notebook, self._plot_counter, self)
-        item_name, item_unit, item_data = self._selected_data.open_file_data(self._selected_item)
+        item_name, item_unit, item_data = self._selected_data.open_csv_data(self._selected_item)
         self._time_line = self._selected_data.timeline
         self._plot_data = [PlotData(name, unit, series)
                            for unit, [name, series] in zip(item_unit, item_data.iteritems())]

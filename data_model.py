@@ -11,7 +11,7 @@ class TestData:
         self.encoding = tmp['encoding']
         self.signal, self.file_name, self.unit, self.timeline = self.open_file_title(self.encoding)
 
-    def open_file_data(self, item_list):
+    def open_csv_data(self, item_list):
         data_list = [i + 3 for i in item_list]
         data = pd.read_csv(self.data_path, skiprows=[0, 1, 2, 3, 4, 6, 7], header=0,
                            delimiter=',', encoding=self.encoding, usecols=data_list)
@@ -19,12 +19,6 @@ class TestData:
         unit = [self.unit[i] for i in item_list]
 
         return name, unit, data
-
-    def open_file_data_all(self):
-        data = pd.read_csv(self.data_path, skiprows=[0, 1, 2, 3, 4, 6, 7], header=0,
-                           delimiter=',', encoding=self.encoding,
-                           usecols=lambda title: title not in ["Time", "Time.1", "Time.2"])
-        return self.signal, self.unit, self.timeline, data
 
     def open_file_title(self, encoding):
 
