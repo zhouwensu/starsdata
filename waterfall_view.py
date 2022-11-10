@@ -6,7 +6,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolb
 from matplotlib.ticker import AutoMinorLocator
 
 
-class PlotView(ttk.Frame):
+class WaterfallView(ttk.Frame):
     def __init__(self, container, plot_counter, controller):
         super().__init__(container)
         self.pack(side=tk.TOP, fill=tk.X)

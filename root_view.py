@@ -53,7 +53,8 @@ class RootView(tk.Tk):
 
     def init_plot_menu(self, parent):
         plot_menu = tk.Menu(parent, tearoff=0)
-        plot_menu.add_command(label='PlotXY', command=self.controller.plot_timeline)
+        plot_menu.add_command(label='Plot Timeline', command=self.controller.plot_timeline)
+        plot_menu.add_command(label='Plot FFT Waterfall', command=self.controller.plot_fft_waterfall_config)
         return plot_menu
 
     def init_export_menu(self, parent):

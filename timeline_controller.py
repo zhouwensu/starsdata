@@ -1,19 +1,19 @@
 import matplotlib.colors as mcolors
-from plot_view import PlotView
+from timeline_view import ChartView
 import collections
 from operator import attrgetter
 
 PlotData = collections.namedtuple('PlotData', ['name', 'unit', 'series'])
 
 
-class PlotController:
+class TimelineController:
     def __init__(self, selected_data, selected_item, plot_notebook, plot_counter):
         self._selected_data = selected_data
         self._selected_item = selected_item
         self._plot_notebook = plot_notebook
         self._plot_counter = plot_counter
-        self._plot_view = PlotView(self._plot_notebook, self._plot_counter, self)
-        item_name, item_unit, item_data = self._selected_data.open_csv_data(self._selected_item)
+        self._plot_view = ChartView(self._plot_notebook, self._plot_counter, self)
+        item_name, item_unit, item_data = self._selected_data.read_csv_data(self._selected_item)
         self._time_line = self._selected_data.timeline
         self._plot_data = [PlotData(name, unit, series)
                            for unit, [name, series] in zip(item_unit, item_data.iteritems())]

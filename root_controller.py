@@ -1,11 +1,12 @@
-
 import tkinter as tk  # python 3
 from tkinter import ttk
 from tkinter import messagebox
 from data_model import TestData
 from root_view import RootView
 from tkinter import filedialog
-from plot_controller import PlotController
+from timeline_controller import TimelineController
+from waterfall_controller import FFTWaterfallController
+from tkinter import messagebox as msg
 from asammdf import MDF, Signal
 import numpy as np
 import pandas as pd
@@ -71,6 +72,43 @@ class RootController:
 
                 mdf4.save(dst=filename, overwrite=True)
 
+    def plot_fft_waterfall_config(self):
+        selected_item = self.view.tree_frame.tree.selection()
+        data_parent = self.view.tree_frame.tree.parent(selected_item[0])
+        if data_parent == '':
+            msg.showerror("ERROR", "Wrong Data Selected")
+        else:
+            # ---------------- Show FFT Config------------------------------
+
+            waterfall_config_view = tk.Toplevel()
+            waterfall_config_view.title = "FFT Config"
+            ttk.Label(waterfall_config_view, text="Speed Channel").grid(column=0, row=0)
+            var = tk.StringVar()
+            data_index = self.view.tree_frame.tree.index(data_parent)
+            selected_data = self.test_data[data_index]
+            name_tuple = tuple(selected_data.signal_names)
+            speed_combobox = ttk.Combobox(waterfall_config_view, width=15, textvariable=var, value=name_tuple)
+            speed_combobox.grid(column=0, row=1)
+            plot_btn = ttk.Button(waterfall_config_view, text="OK",
+                                  command=lambda: plot_fft_waterfall(speed_combobox.get()))
+            plot_btn.grid(column=0, row=2)
+            # ----------------------------------------------------------------
+
+        def plot_fft_waterfall(speed_name):
+
+            item_index = self.view.tree_frame.tree.index(selected_item[0])
+            item_index_list = [item_index, ]
+            speed_index = name_tuple.index(speed_name)
+            item_index_list.append(speed_index)
+
+            waterfall_config_view.destroy()
+            plot_controller = FFTWaterfallController(speed_name, selected_data, item_index_list,
+                                                     self.view.plot_notebook,
+                                                     self.plot_counter)
+            self.plot_view.append(plot_controller)
+            self.view.update()
+            self.plot_counter += 1
+
     def plot_timeline(self):
         selected_item = self.view.tree_frame.tree.selection()
         try:
@@ -87,7 +125,8 @@ class RootController:
                 if data_parent == self.view.tree_frame.tree.parent(item):  # Check if they belong to one Data
                     item_index = self.view.tree_frame.tree.index(item)
                     item_index_list.append(item_index)
-            plot_controller = PlotController(selected_data, item_index_list, self.view.plot_notebook, self.plot_counter)
+            plot_controller = TimelineController(selected_data, item_index_list, self.view.plot_notebook,
+                                                 self.plot_counter)
             self.plot_view.append(plot_controller)
             self.view.update()
             self.plot_counter += 1
@@ -112,10 +151,12 @@ class RootController:
 
     # Open Data
     def open_dialog(self):
-        file_path = filedialog.askopenfilenames(filetypes={("CSV Data", "*.csv")})
+        file_path = filedialog.askopenfilenames(
+            filetypes={("CSV Data", "*.csv"), ("MDF4 Data", "*.mf4"), ("MDF Data", "*.mdf"), ("INCA MDF", "*.dat")})
         if len(file_path) == 0:
             return
-        self.open_test_file(file_path)
+        else:
+            self.open_test_file(file_path)
 
     def open_test_file(self, file_path):
         window_progressbar = tk.Tk()
