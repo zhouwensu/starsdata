@@ -1,4 +1,4 @@
-from notebook_view import NotebookView
+
 import abc
 
 

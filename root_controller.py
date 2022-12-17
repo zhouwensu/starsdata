@@ -153,7 +153,8 @@ class RootController:
     # Open Data
     def open_dialog(self):
         file_path = filedialog.askopenfilenames(
-            filetypes={("CSV Data", "*.csv"), ("MDF4 Data", "*.mf4"), ("MDF Data", "*.mdf"), ("INCA MDF", "*.dat")})
+            filetypes=[("STARS Data", ("*.csv", "*.mf4", "*.mdf", "*.dat")), ('all files', '.*')])
+
         if len(file_path) == 0:
             return
         else:
