@@ -16,9 +16,9 @@ class RootController:
     def __init__(self):
         self.data_location = []
         self.test_data = []
-        self.plot_view = []
+        self.notebook = []
         self.view = RootView(self)
-        self.plot_counter = 0
+        self.notebook_counter = 0
         self.calc_counter = 0
 
     def run(self):
@@ -104,10 +104,10 @@ class RootController:
             waterfall_config_view.destroy()
             plot_controller = FFTWaterfallController(speed_name, selected_data, item_index_list,
                                                      self.view.plot_notebook,
-                                                     self.plot_counter)
-            self.plot_view.append(plot_controller)
+                                                     self.notebook_counter)
+            self.notebook.append(plot_controller)
             self.view.update()
-            self.plot_counter += 1
+            self.notebook_counter += 1
 
     def plot_timeline(self):
         selected_item = self.view.tree_frame.tree.selection()
@@ -126,10 +126,11 @@ class RootController:
                     item_index = self.view.tree_frame.tree.index(item)
                     item_index_list.append(item_index)
             plot_controller = TimelineController(selected_data, item_index_list, self.view.plot_notebook,
-                                                 self.plot_counter)
-            self.plot_view.append(plot_controller)
+                                                 self.notebook_counter)
+            plot_controller.plot()
+            self.notebook.append(plot_controller)
             self.view.update()
-            self.plot_counter += 1
+            self.notebook_counter += 1
 
     def close_data(self):
         selected_item = self.view.tree_frame.tree.selection()

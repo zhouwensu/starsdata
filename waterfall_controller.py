@@ -19,6 +19,7 @@ class FFTWaterfallController:
         self._selected_index = selected_index
         self._plot_notebook = plot_notebook
         self._plot_counter = plot_counter
+        self._plot_view = WaterfallView(self._plot_notebook, self._plot_counter, self)
         self._freq = 1000
         self._N = int(np.power(2, np.ceil(np.log2(self._freq))))  # 下一个最近二次幂
         self._fft_array = np.zeros([self._selected_data.count // self._freq, self._N // 2], dtype=float)
@@ -30,6 +31,8 @@ class FFTWaterfallController:
         signal_series = item_data.iloc[:, -1]
 
         signal_series.rolling(1000, min_periods=1000, step=1000).apply(lambda x: self.FFT(x.values))
+
+        self._ax = self._plot_view.ax
 
         fig, ax = plt.subplots()
         im = ax.imshow(self._fft_array)
