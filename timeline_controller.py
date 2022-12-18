@@ -9,17 +9,18 @@ PlotData = collections.namedtuple('PlotData', ['name', 'unit', 'series'])
 
 class TimelineController(NotebookController):
 
-    def __init__(self, selected_data, selected_item, plot_notebook, plot_counter):
-        super().__init__(selected_data, selected_item, plot_notebook, plot_counter)
+    def __init__(self, selected_data, item_index_list, plot_notebook, plot_counter):
+        super().__init__(selected_data, item_index_list, plot_notebook, plot_counter)
         self._view = TimelineView(self._plot_notebook, self, self._plot_counter)
         self._ax = self._view.ax
 
-        item_name, item_unit, item_data = self._selected_data.read_csv_data(self._selected_item)
+        item_name, item_unit, item_data = self._selected_data.read_csv_data(self._item_index_list)
         self._time_line = self._selected_data.timeline
         self._plot_data = [PlotData(name, unit, series)
                            for unit, [name, series] in zip(item_unit, item_data.items())]
         self._plot_data.sort(key=attrgetter('unit'))
         self._plot = []
+        self.plot()
 
     def plot(self):
         ax_counter = 0
@@ -58,7 +59,7 @@ class TimelineController(NotebookController):
                 unit_memo = data.unit
                 colors_index = colors_index + 1
         self._view.ax.legend(handles=self._plot)
-        print("printed")
+        self._view.draw()
 
     def del_plot(self):
         self._view.destroy()

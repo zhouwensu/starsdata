@@ -3,9 +3,9 @@ import abc
 
 
 class NotebookController(abc.ABC):
-    def __init__(self, selected_data, selected_item, plot_notebook, plot_counter):
+    def __init__(self, selected_data, item_index_list, plot_notebook, plot_counter):
         self._selected_data = selected_data
-        self._selected_item = selected_item
+        self._item_index_list = item_index_list
         self._plot_notebook = plot_notebook
         self._plot_counter = plot_counter
 

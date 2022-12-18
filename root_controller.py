@@ -72,36 +72,11 @@ class RootController:
 
                 mdf4.save(dst=filename, overwrite=True)
 
-    def plot_fft_waterfall_config(self):
-        selected_item = self.view.tree_frame.tree.selection()
-        data_parent = self.view.tree_frame.tree.parent(selected_item[0])
-        if data_parent == '':
-            msg.showerror("ERROR", "Wrong Data Selected")
-        else:
-            # ---------------- Show FFT Config------------------------------
-
-            waterfall_config_view = tk.Toplevel()
-            waterfall_config_view.title = "FFT Config"
-            ttk.Label(waterfall_config_view, text="Speed Channel").grid(column=0, row=0)
-            var = tk.StringVar()
-            data_index = self.view.tree_frame.tree.index(data_parent)
-            selected_data = self.test_data[data_index]
-            name_tuple = tuple(selected_data.signal_names)
-            speed_combobox = ttk.Combobox(waterfall_config_view, width=15, textvariable=var, value=name_tuple)
-            speed_combobox.grid(column=0, row=1)
-            plot_btn = ttk.Button(waterfall_config_view, text="OK",
-                                  command=lambda: plot_fft_waterfall(speed_combobox.get()))
-            plot_btn.grid(column=0, row=2)
-            # ----------------------------------------------------------------
-
         def plot_fft_waterfall(speed_name):
 
             item_index = self.view.tree_frame.tree.index(selected_item[0])
             item_index_list = [item_index, ]
-            speed_index = name_tuple.index(speed_name)
-            item_index_list.append(speed_index)
 
-            waterfall_config_view.destroy()
             plot_controller = FFTWaterfallController(speed_name, selected_data, item_index_list,
                                                      self.view.plot_notebook,
                                                      self.notebook_counter)
@@ -109,28 +84,36 @@ class RootController:
             self.view.update()
             self.notebook_counter += 1
 
-    def plot_timeline(self):
+    def select_data(self):
         selected_item = self.view.tree_frame.tree.selection()
-        try:
-            data_parent = self.view.tree_frame.tree.parent(selected_item[0])
-            if data_parent == '':
-                data_parent = selected_item[0]
-            data_index = self.view.tree_frame.tree.index(data_parent)
-            selected_data = self.test_data[data_index]
-        except (ValueError, IndexError) as e:
-            tk.messagebox.showinfo('Error', 'Open ' + str(e) + ' error')
-        else:
-            item_index_list = []
-            for item in selected_item:
-                if data_parent == self.view.tree_frame.tree.parent(item):  # Check if they belong to one Data
-                    item_index = self.view.tree_frame.tree.index(item)
-                    item_index_list.append(item_index)
-            plot_controller = TimelineController(selected_data, item_index_list, self.view.plot_notebook,
+        data_parent = self.view.tree_frame.tree.parent(selected_item[0])
+        if data_parent == '':
+            data_parent = selected_item[0]
+        data_index = self.view.tree_frame.tree.index(data_parent)
+        selected_data = self.test_data[data_index]
+
+        item_index_list = []
+        for item in selected_item:
+            if data_parent == self.view.tree_frame.tree.parent(item):  # Check if they belong to one Data
+                item_index = self.view.tree_frame.tree.index(item)
+                item_index_list.append(item_index)
+        return selected_data, item_index_list
+
+    def plot_timeline(self):
+        selected_data, item_index_list = self.select_data()
+        plot_controller = TimelineController(selected_data, item_index_list, self.view.plot_notebook,
+                                             self.notebook_counter)
+        self.notebook.append(plot_controller)
+        self.view.update()
+        self.notebook_counter += 1
+
+    def plot_fft_waterfall(self):
+        selected_data, item_index_list = self.select_data()
+        plot_controller = FFTWaterfallController(selected_data, item_index_list, self.view.plot_notebook,
                                                  self.notebook_counter)
-            plot_controller.plot()
-            self.notebook.append(plot_controller)
-            self.view.update()
-            self.notebook_counter += 1
+        self.notebook.append(plot_controller)
+        self.view.update()
+        self.notebook_counter += 1
 
     def close_data(self):
         selected_item = self.view.tree_frame.tree.selection()

@@ -5,7 +5,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolb
 
 
 class NotebookView(ttk.Frame):
-    def __init__(self, container,controller, plot_counter ):
+    def __init__(self, container, controller, plot_counter):
         super().__init__(container)
         self.pack(side=tk.TOP, fill=tk.X)
         self._controller = controller
@@ -23,3 +23,6 @@ class NotebookView(ttk.Frame):
 
         ttk.Button(self, text="Config", command=self._controller.cfg_plot).grid(column=1, row=1)
         ttk.Button(self, text="Close", command=self._controller.del_plot).grid(column=2, row=1)
+
+    def draw(self):
+        self._canvas.draw()
